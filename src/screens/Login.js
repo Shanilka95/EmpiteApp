@@ -1,6 +1,9 @@
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import BasicStyles from "../styles/BasicStyles";
+import { requestPermission } from "../../service/permissionServise";
+
+requestPermission();
 
 const Login = ({ navigation }) => {
   return (
