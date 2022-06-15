@@ -1,5 +1,4 @@
 import axios from "axios";
-//import { serverUrl } from '../config.json';
 
 const UNAUTHORIZED = 401;
 const axiosInstance = axios;
