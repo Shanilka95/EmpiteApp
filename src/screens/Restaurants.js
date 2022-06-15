@@ -147,6 +147,7 @@ const Restaurants = () => {
   return (
     <View style={styles.container}>
 
+<<<<<<< HEAD
       {currentLocation_loaded ?
         <MapView
           style={styles.map}
@@ -177,6 +178,28 @@ const Restaurants = () => {
         : <>
         </>
       }
+=======
+      <MapView
+        style={styles.map}
+        showsUserLocation={true}
+        showsMyLocationButton={true}
+        provider={PROVIDER_GOOGLE}
+        showsIndoors={true}
+        zoomEnabled={true}
+        zoomTapEnabled={true}
+        showsScale={true}
+        showsBuildings={true}
+        showsCompass={true}
+        
+      // region={{
+      //   latitude: 37.78825,
+      //   longitude: -122.4324,
+      //   latitudeDelta: 0.015,
+      //   longitudeDelta: 0.0121,
+      // }}
+      >
+      </MapView>
+>>>>>>> f36efc9989e04d52e3351783d077c8ff32397b39
 
       {/* <MapView
         // onPress={() => Keyboard.dismiss()}
