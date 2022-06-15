@@ -2,8 +2,9 @@ import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, Platform, PermissionsAndroid, ToastAndroid, Linking, Alert, Dimensions } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
 import BasicStyles from "../styles/BasicStyles";
-import MapView, { Marker, MarkerAnimated, PROVIDER_GOOGLE, Circle } from 'react-native-maps';
+import MapView, { Marker, MarkerAnimated, Callout, PROVIDER_GOOGLE, Circle } from 'react-native-maps';
 import Geolocation from 'react-native-geolocation-service';
+import { getGoogleData } from "../../service/api/googleService";
 const { width, height } = Dimensions.get('screen');
 const height2 = Dimensions.get('window').height;
 const ASPECT_RATIO = width / height;
@@ -18,9 +19,11 @@ const Restaurants = () => {
   const [currentLocation_loaded, setCurrentLocation_loaded] = useState(false);
   const [currernt_location, setCurrernt_location] = useState();
   const [pickupLatLng, setPickupLatLng] = useState();
+  const [resturentData, setResturentData] = useState([]);
 
   useEffect(() => {
     findCoordinates();
+
   }, [])
 
   const findCoordinates = async () => {
@@ -34,6 +37,7 @@ const Restaurants = () => {
         async (position) => {
 
           console.log("............", position);
+          getNearResturentDetails(position?.coords?.latitude, position?.coords?.longitude);
 
           setCurrernt_location({
             coords: {
@@ -113,7 +117,7 @@ const Restaurants = () => {
     return false;
   };
 
-  hasPermissionIOS = async () => {
+  const hasPermissionIOS = async () => {
     const openSetting = () => {
       Linking.openSettings().catch(() => {
         Alert.alert('Unable to open settings');
@@ -143,6 +147,23 @@ const Restaurants = () => {
     return false;
   };
 
+  const getNearResturentDetails = (lat, lang) => {
+
+    getGoogleData(lat, lang).then(
+      response => {
+        console.log("...............", response.data);
+        setResturentData(response.data.results);
+
+      }
+    ).catch(error => {
+      if (error.message == "Request failed with status code 404") {
+        showError("Connection error! Please try again.");
+      } else {
+        showError(error.message);
+      }
+    })
+  }
+
 
   return (
     <View style={styles.container}>
@@ -166,13 +187,25 @@ const Restaurants = () => {
             longitudeDelta: LONGITUDE_DELTA,
           }}
 
-        // region={{
-        //   latitude: 37.78825,
-        //   longitude: -122.4324,
-        //   latitudeDelta: 0.015,
-        //   longitudeDelta: 0.0121,
-        // }}
         >
+          {
+            resturentData?.map((i, index) => {
+
+              return (
+                <Marker
+                  key={index}
+                  coordinate={{ "latitude": i.geometry?.location?.lat, "longitude": i.geometry?.location?.lng }}
+                  title={i.name}
+                >
+                  <Callout
+                    style={{ "width": 100, "height": 50 }}>
+                    <View>
+                      <Text>{i.vicinity}</Text>
+                    </View>
+                  </Callout>
+                </Marker>);
+            })
+          }
         </MapView>
         : <>
         </>
