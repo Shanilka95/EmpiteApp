@@ -18,18 +18,19 @@ const MainTabNavigation = () => {
       screenOptions={{
         headerShown: false,
         tabBarActiveTintColor: BasicStyles.COLORS.WHITE,
-        // tabBarShowLabel: false,
         tabBarLabelStyle: {
           fontFamily: BasicStyles.FONT_FAMILY.MEDIUM,
           color: BasicStyles.COLORS.WHITE,
           fontSize: 12,
-          bottom: 5,
         },
         tabBarStyle: {
           backgroundColor: BasicStyles.COLORS.BLUE,
-          height: 70,
+          height: Platform.OS === "android" ? 70 : 95,
           borderTopLeftRadius: 15,
           borderTopRightRadius: 15,
+        },
+        tabBarIconStyle: {
+          top: 5,
         },
       }}
     >
