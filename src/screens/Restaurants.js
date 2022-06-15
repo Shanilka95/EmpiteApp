@@ -1,38 +1,50 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, Platform, PermissionsAndroid, ToastAndroid, Linking, Alert, Dimensions } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Platform,
+  PermissionsAndroid,
+  ToastAndroid,
+  Linking,
+  Alert,
+  Dimensions,
+} from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
 import BasicStyles from "../styles/BasicStyles";
-import MapView, { Marker, MarkerAnimated, PROVIDER_GOOGLE, Circle } from 'react-native-maps';
-import Geolocation from 'react-native-geolocation-service';
-const { width, height } = Dimensions.get('screen');
-const height2 = Dimensions.get('window').height;
+import MapView, {
+  Marker,
+  MarkerAnimated,
+  PROVIDER_GOOGLE,
+  Circle,
+} from "react-native-maps";
+import Geolocation from "react-native-geolocation-service";
+const { width, height } = Dimensions.get("screen");
+const height2 = Dimensions.get("window").height;
 const ASPECT_RATIO = width / height;
 const LATITUDE_DELTA = 0.02;
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 
-
 var mapView = new MapView();
 
 const Restaurants = () => {
-
   const [currentLocation_loaded, setCurrentLocation_loaded] = useState(false);
   const [currernt_location, setCurrernt_location] = useState();
   const [pickupLatLng, setPickupLatLng] = useState();
 
   useEffect(() => {
     findCoordinates();
-  }, [])
+  }, []);
 
   const findCoordinates = async () => {
     if (!currentLocation_loaded) {
-      // const hasPermission = await hasLocationPermission();
+      const hasPermission = await hasLocationPermission();
 
-      // if (!hasPermission) {
-      //   return;
-      // }
+      if (!hasPermission) {
+        return;
+      }
       Geolocation.getCurrentPosition(
         async (position) => {
-
           console.log("............", position);
 
           setCurrernt_location({
@@ -46,8 +58,7 @@ const Restaurants = () => {
               speed: position?.coords?.speed,
             },
             timestamp: position?.timestamp,
-          }
-          );
+          });
           setCurrentLocation_loaded(true);
           setPickupLatLng({
             latitude: position?.coords?.latitude,
@@ -55,7 +66,6 @@ const Restaurants = () => {
             latitudeDelta: LATITUDE_DELTA,
             longitudeDelta: LONGITUDE_DELTA,
           });
-
         },
         (error) => {
           console.log(error.code, error.message);
@@ -66,24 +76,24 @@ const Restaurants = () => {
           maximumAge: 10000,
           distanceFilter: 0,
           forceRequestLocation: true,
-          accuracy: { android: "high", ios: "bestForNavigation" }
+          accuracy: { android: "high", ios: "bestForNavigation" },
         }
       );
     }
   };
 
   const hasLocationPermission = async () => {
-    if (Platform.OS === 'ios') {
-      const hasPermission = await this.hasPermissionIOS();
+    if (Platform.OS === "ios") {
+      const hasPermission = await hasPermissionIOS();
       return hasPermission;
     }
 
-    if (Platform.OS === 'android' && Platform.Version < 23) {
+    if (Platform.OS === "android" && Platform.Version < 23) {
       return true;
     }
 
     const hasPermission = await PermissionsAndroid.check(
-      PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+      PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
     );
 
     if (hasPermission) {
@@ -91,7 +101,7 @@ const Restaurants = () => {
     }
 
     const status = await PermissionsAndroid.request(
-      PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+      PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
     );
 
     if (status === PermissionsAndroid.RESULTS.GRANTED) {
@@ -100,54 +110,51 @@ const Restaurants = () => {
 
     if (status === PermissionsAndroid.RESULTS.DENIED) {
       ToastAndroid.show(
-        'Location permission denied by user.',
-        ToastAndroid.LONG,
+        "Location permission denied by user.",
+        ToastAndroid.LONG
       );
     } else if (status === PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN) {
       ToastAndroid.show(
-        'Location permission revoked by user.',
-        ToastAndroid.LONG,
+        "Location permission revoked by user.",
+        ToastAndroid.LONG
       );
     }
 
     return false;
   };
 
-  hasPermissionIOS = async () => {
+  const hasPermissionIOS = async () => {
     const openSetting = () => {
       Linking.openSettings().catch(() => {
-        Alert.alert('Unable to open settings');
+        Alert.alert("Unable to open settings");
       });
     };
-    const status = await Geolocation.requestAuthorization('whenInUse');
+    const status = await Geolocation.requestAuthorization("whenInUse");
 
-    if (status === 'granted') {
+    if (status === "granted") {
       return true;
     }
 
-    if (status === 'denied') {
-      Alert.alert('Location permission denied');
+    if (status === "denied") {
+      Alert.alert("Location permission denied");
     }
 
-    if (status === 'disabled') {
+    if (status === "disabled") {
       Alert.alert(
         `Turn on Location Services to allow Hola Rider to determine your location.`,
-        '',
+        "",
         [
-          { text: 'Go to Settings', onPress: openSetting },
-          { text: "Don't Use Location", onPress: () => { } },
-        ],
+          { text: "Go to Settings", onPress: openSetting },
+          { text: "Don't Use Location", onPress: () => {} },
+        ]
       );
     }
-
     return false;
   };
 
-
   return (
     <View style={styles.container}>
-
-      {currentLocation_loaded ?
+      {currentLocation_loaded ? (
         <MapView
           style={styles.map}
           showsUserLocation={true}
@@ -166,17 +173,16 @@ const Restaurants = () => {
             longitudeDelta: LONGITUDE_DELTA,
           }}
 
-        // region={{
-        //   latitude: 37.78825,
-        //   longitude: -122.4324,
-        //   latitudeDelta: 0.015,
-        //   longitudeDelta: 0.0121,
-        // }}
-        >
-        </MapView>
-        : <>
-        </>
-      }
+          // region={{
+          //   latitude: 37.78825,
+          //   longitude: -122.4324,
+          //   latitudeDelta: 0.015,
+          //   longitudeDelta: 0.0121,
+          // }}
+        ></MapView>
+      ) : (
+        <></>
+      )}
 
       {/* <MapView
         // onPress={() => Keyboard.dismiss()}
@@ -205,7 +211,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: 'red',
+    backgroundColor: "red",
   },
   text: {
     fontFamily: BasicStyles.FONT_FAMILY.EXTRA_BOLD,

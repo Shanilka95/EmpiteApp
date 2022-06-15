@@ -3,9 +3,11 @@ import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import BasicStyles from "../styles/BasicStyles";
 import { requestPermission } from "../../service/permissionServise";
 
-requestPermission();
-
 const Login = ({ navigation }) => {
+  // React.useEffect(() => {
+  //   requestPermission();
+  // }, []);
+
   return (
     <View style={styles.container}>
       <TouchableOpacity
